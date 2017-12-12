@@ -1,0 +1,13 @@
+redisio:
+  restart: always
+  image: redis:latest
+postgresql:
+  restart: always
+  image: postgres:latest
+multistreamer:
+  restart: always
+  image: jprjr/multistreamer:10.2.3-1
+  links:
+   - redisio
+   - postgresql
+
