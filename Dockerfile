@@ -7,21 +7,8 @@ ARG NGINX_LUA_VER=0.10.8
 ARG NGINX_RTMP_VER=1.2.0
 ARG NGINX_STREAM_LUA_VER=e527417c5d04da0c26c12cf4d8a0ef0f1e36e051
 ARG LUAROCKS_VER=2.4.2
-ARG MULTISTREAMER_VER=10.2.3
+ARG MULTISTREAMER_VER=master
 ARG SOCKEXEC_VER=2.0.1
-
-ARG LUA_LAPIS_VER=1.5.1-1
-ARG LUA_LUA_RESTY_EXEC_VER=3.0.1-0
-ARG LUA_LUA_RESTY_JIT_UUID_VER=0.0.6-1
-ARG LUA_LUA_RESTY_STRING_VER=0.09-0
-ARG LUA_LUA_RESTY_HTTP_VER=0.11-0
-ARG LUA_LUA_RESTY_UPLOAD_VER=0.09-2
-ARG LUA_LAPIS_VER=1.5.1-1
-ARG LUA_ETLUA_VER=1.3.0-1
-ARG LUA_LUAPOSIX_VER=34.0.1-3
-ARG LUA_LUAFILESYSTEM_VER=1.6.3-2
-ARG LUA_WHEREAMI_VER=1.2.1-0
-ARG LUA_LUACRYPTO_VER=0.3.2-2
 
 RUN apk add --no-cache \
     bash \
@@ -51,8 +38,9 @@ RUN apk add --no-cache \
     libressl2.4-libcrypto \
     ca-certificates \
     postgresql-client \
-    zlib && \
-  mkdir /tmp/openresty-build && \
+    zlib
+
+RUN mkdir /tmp/openresty-build && \
   cd /tmp/openresty-build && \
   curl -R -L -o s6-overlay-amd64.tar.gz \
     https://github.com/just-containers/s6-overlay/releases/download/v$S6_OVERLAY_VER/s6-overlay-amd64.tar.gz  && \
@@ -108,28 +96,10 @@ RUN apk add --no-cache \
   make && \
   make build && \
   make install && \
-  adduser -h /home/multistreamer -g multistreamer -s /sbin/nologin -S -D multistreamer && \
-  cd /home/multistreamer && \
-  curl -R -L -o multistreamer-$MULTISTREAMER_VER.tar.gz \
-    https://github.com/jprjr/multistreamer/archive/$MULTISTREAMER_VER.tar.gz && \
-  tar xzf multistreamer-$MULTISTREAMER_VER.tar.gz && \
-  mv multistreamer-$MULTISTREAMER_VER/* . && \
-  rm -rf multistreamer-$MULTISTREAMER_VER && \
-  ln -fs /etc/multistreamer/config.lua /home/multistreamer/config.lua && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-exec $LUA_LUA_RESTY_EXEC_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-jit-uuid $LUA_LUA_RESTY_JIT_UUID_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-string $LUA_LUA_RESTY_STRING_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-http $LUA_LUA_RESTY_HTTP_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-upload $LUA_LUA_RESTY_UPLOAD_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install lapis $LUA_LAPIS_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install etlua $LUA_ETLUA_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install luaposix $LUA_LUAPOSIX_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install luafilesystem $LUA_LUAFILESYSTEM_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install whereami $LUA_WHEREAMI_VER && \
-  /opt/luarocks/bin/luarocks --tree lua_modules install luacrypto $LUA_LUACRYPTO_VER && \
-  chown -R multistreamer:nogroup . && \
-  mkdir /etc/multistreamer && \
-  mkdir /etc/htpasswd-auth-server && \
+  cd / && \
+  rm -rf /tmp/openresty-build
+
+RUN  mkdir /etc/htpasswd-auth-server && \
   mkdir /etc/redis-auth-server && \
   adduser -h /home/redisauth -g redisauth -s /sbin/nologin -S -D redisauth && \
   cd /home/redisauth && \
@@ -139,7 +109,7 @@ RUN apk add --no-cache \
   mv redis-auth-server-master/* . && \
   rm -rf redis-auth-server-master && \
   chown -R redisauth:nogroup . && \
-  ln -s /home/multistreamer/lua_modules ./lua_modules && \
+  ln -sf /home/multistreamer/lua_modules ./lua_modules && \
   rm -rf ./etc && \
   ln -sf /etc/redis-auth-server ./etc && \
   adduser -h /home/htpasswdauth -g htpasswdauth -s /sbin/nologin -S -D htpasswdauth && \
@@ -150,30 +120,28 @@ RUN apk add --no-cache \
   mv htpasswd-auth-server-master/* . && \
   rm -rf htpasswd-auth-server-master && \
   chown -R htpasswdauth:nogroup . && \
-  ln -s /home/multistreamer/lua_modules ./lua_modules && \
+  ln -sf /home/multistreamer/lua_modules ./lua_modules && \
   rm -rf ./etc && \
-  ln -sf /etc/htpasswd-auth-server ./etc && \
-  cd / && \
-  apk del --no-cache \
-    gcc \
-    make \
-    musl-dev \
-    luajit-dev \
-    linux-headers \
-    gd-dev \
-    geoip-dev \
-    libxml2-dev \
-    libxslt-dev \
-    libressl-dev \
-    paxmark \
-    pcre-dev \
-    perl-dev \
-    pkgconf \
-    zlib-dev \
-    curl \
-    git \
-    unzip && \
-  rm -rf /tmp/openresty-build && \
+  ln -sf /etc/htpasswd-auth-server ./etc
+
+RUN adduser -h /home/multistreamer -g multistreamer -s /sbin/nologin -S -D multistreamer && \
+  cd /home/multistreamer && \
+  rm -rf ./* && \
+  git clone https://github.com/jprjr/multistreamer.git . && \
+  ln -fs /etc/multistreamer/config.lua /home/multistreamer/config.lua && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-exec && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-jit-uuid && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-string && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-http && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-upload && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install lapis && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install etlua && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install luaposix && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install luafilesystem && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install whereami && \
+  /opt/luarocks/bin/luarocks --tree lua_modules install luacrypto && \
+  chown -R multistreamer:nogroup . && \
+  mkdir /etc/multistreamer && \
   mkdir -p /var/log/multistreamer && \
   chown nobody:nogroup /var/log/multistreamer
 
