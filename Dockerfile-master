@@ -127,7 +127,7 @@ RUN  mkdir /etc/htpasswd-auth-server && \
 RUN adduser -h /home/multistreamer -g multistreamer -s /sbin/nologin -S -D multistreamer && \
   cd /home/multistreamer && \
   rm -rf ./* && \
-  git clone https://github.com/jprjr/multistreamer.git . && \
+  git clone https://github.com/danraf77/multistreamer.git . && \
   ln -fs /etc/multistreamer/config.lua /home/multistreamer/config.lua && \
   /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-exec && \
   /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-jit-uuid && \

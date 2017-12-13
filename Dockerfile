@@ -7,7 +7,7 @@ ARG NGINX_LUA_VER=0.10.8
 ARG NGINX_RTMP_VER=1.2.0
 ARG NGINX_STREAM_LUA_VER=e527417c5d04da0c26c12cf4d8a0ef0f1e36e051
 ARG LUAROCKS_VER=2.4.2
-ARG MULTISTREAMER_VER=10.2.3
+ARG MULTISTREAMER_VER=master
 ARG SOCKEXEC_VER=2.0.1
 
 ARG LUA_LAPIS_VER=1.5.1-1
@@ -111,7 +111,7 @@ RUN apk add --no-cache \
   adduser -h /home/multistreamer -g multistreamer -s /sbin/nologin -S -D multistreamer && \
   cd /home/multistreamer && \
   curl -R -L -o multistreamer-$MULTISTREAMER_VER.tar.gz \
-    https://github.com/jprjr/multistreamer/archive/$MULTISTREAMER_VER.tar.gz && \
+    https://github.com/danraf77/multistreamer/archive/$MULTISTREAMER_VER.tar.gz && \
   tar xzf multistreamer-$MULTISTREAMER_VER.tar.gz && \
   mv multistreamer-$MULTISTREAMER_VER/* . && \
   rm -rf multistreamer-$MULTISTREAMER_VER && \
