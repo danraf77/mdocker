@@ -1,9 +1,9 @@
 redisio:
   volumes:
-   - ./home/multistreamer/redis:/var/lib/redis:Z
+   - /srv/docker/multistreamer/redis:/var/lib/redis:Z
 postgresql:
   volumes:
-   - ./home/multistreamer/postgresql:/var/lib/postgresql:Z
+   - /srv/docker/multistreamer/postgresql:/var/lib/postgresql:Z
    - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
   environment:
    - POSTGRES_USER=multistreamer
@@ -14,7 +14,7 @@ multistreamer:
    - "6667:6667"
    - "1935:1935"
   volumes:
-   - ./home/multistreamer/multistreamer:/etc/multistreamer:Z
+   - /srv/docker/multistreamer/multistreamer:/etc/multistreamer:Z
    - ./htpasswd:/etc/htpasswd-auth-server:Z
   environment:
    MULTISTREAMER_AUTH_ENDPOINT: 
@@ -49,8 +49,5 @@ multistreamer:
    MULTISTREAMER_IRC_MOTD: 
      Welcome to the Multistreamer IRC server!
      I hope you have fun.
-#data:
-#  image: busybox
-#  volumes:
-#    - /var/lib/postgresql/data
+
 
