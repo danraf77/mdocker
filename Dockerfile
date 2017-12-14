@@ -23,6 +23,8 @@ ARG LUA_LUAFILESYSTEM_VER=1.6.3-2
 ARG LUA_WHEREAMI_VER=1.2.1-0
 ARG LUA_LUACRYPTO_VER=0.3.2-2
 
+COPY multistreamer /home
+
 RUN apk add --no-cache \
     bash \
     gcc \
@@ -110,11 +112,6 @@ RUN apk add --no-cache \
   make install && \
   adduser -h /home/multistreamer -g multistreamer -s /sbin/nologin -S -D multistreamer && \
   cd /home/multistreamer && \
-  curl -R -L -o multistreamer-master.tar.gz \
-    https://github.com/danraf77/multistreamer/archive/master.tar.gz && \
-  tar xzf multistreamer-master.tar.gz && \
-  mv multistreamer-master/* . && \
-  rm -rf multistreamer-master && \
   ln -fs /etc/multistreamer/config.lua /home/multistreamer/config.lua && \
   /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-exec $LUA_LUA_RESTY_EXEC_VER && \
   /opt/luarocks/bin/luarocks --tree lua_modules install lua-resty-jit-uuid $LUA_LUA_RESTY_JIT_UUID_VER && \

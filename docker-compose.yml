@@ -6,7 +6,8 @@ postgresql:
   image: postgres:latest
 multistreamer:
   restart: always
-  image: danraf77/re7:latest
+  build: .
+  dockerfile: Dockerfile
   links:
    - redisio
    - postgresql
