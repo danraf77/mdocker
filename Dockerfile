@@ -23,7 +23,7 @@ ARG LUA_LUAFILESYSTEM_VER=1.6.3-2
 ARG LUA_WHEREAMI_VER=1.2.1-0
 ARG LUA_LUACRYPTO_VER=0.3.2-2
 
-COPY multistreamer /home
+COPY multistreamer /home/
 
 RUN apk add --no-cache \
     bash \
